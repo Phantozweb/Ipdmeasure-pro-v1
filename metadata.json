@@ -1,0 +1,7 @@
+{
+  "name": "Copy of Copy of Backup of IPD Measurement Pro",
+  "description": "Professional-grade Interpupillary Distance measurement tool using AI face detection and iris tracking.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
