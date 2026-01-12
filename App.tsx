@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { ScanFace, Play, ShieldCheck, Cpu } from 'lucide-react';
+import { ScanFace, Play, ShieldCheck, Cpu, X } from 'lucide-react';
 import CameraView from './components/CameraView';
 import MetricsPanel from './components/MetricsPanel';
 import HistoryPanel from './components/HistoryPanel';
@@ -125,12 +125,28 @@ const App: React.FC = () => {
         setCameraKey(prev => prev + 1);
     };
 
+    const closeWidget = useCallback(() => {
+        if (window.parent !== window) {
+            window.parent.postMessage({ type: 'IPD_CLOSE' }, '*');
+        }
+    }, []);
+
     // --- RENDER STATES ---
 
     if (loadingState === 'idle') {
         return (
-            <div className={`flex flex-col items-center justify-center p-6 text-center transition-all duration-500 ${isEmbedded ? 'h-full bg-transparent' : 'min-h-screen bg-gray-50'}`}>
-                <div className="bg-white/80 backdrop-blur-md p-8 rounded-2xl shadow-xl border border-white/50 max-w-sm w-full animate-in fade-in zoom-in-95 duration-500">
+            <div className={`relative flex flex-col items-center justify-center p-6 text-center transition-all duration-500 ${isEmbedded ? 'h-full bg-transparent' : 'min-h-screen bg-gray-50'}`}>
+                {isEmbedded && (
+                    <button 
+                        onClick={closeWidget}
+                        className="absolute top-4 right-4 z-50 p-2 bg-gray-200/50 hover:bg-gray-300/80 backdrop-blur-sm rounded-full text-gray-700 transition-all"
+                        title="Close Scanner"
+                    >
+                        <X size={20} />
+                    </button>
+                )}
+                
+                <div className="bg-white/90 backdrop-blur-md p-8 rounded-2xl shadow-xl border border-white/50 max-w-sm w-full animate-in fade-in zoom-in-95 duration-500">
                     <div className="w-20 h-20 bg-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg shadow-blue-600/30">
                         <ScanFace size={40} className="text-white" />
                     </div>
@@ -170,6 +186,14 @@ const App: React.FC = () => {
     if (loadingState === 'loading') {
         return (
             <div className={`flex flex-col items-center justify-center p-4 transition-colors duration-500 ${isEmbedded ? 'h-full' : 'min-h-screen bg-white'}`}>
+                {isEmbedded && (
+                    <button 
+                        onClick={closeWidget}
+                        className="fixed top-4 right-4 z-50 p-2 bg-gray-100 rounded-full text-gray-500 hover:bg-gray-200"
+                    >
+                        <X size={20} />
+                    </button>
+                )}
                 <div className="relative mb-6">
                     <div className="w-16 h-16 border-4 border-blue-100 border-t-blue-600 rounded-full animate-spin"></div>
                     <div className="absolute inset-0 flex items-center justify-center">
@@ -187,6 +211,14 @@ const App: React.FC = () => {
     if (loadingState === 'error') {
         return (
             <div className={`flex flex-col items-center justify-center p-4 text-center transition-colors duration-500 ${isEmbedded ? 'h-full' : 'min-h-screen bg-white'}`}>
+                 {isEmbedded && (
+                    <button 
+                        onClick={closeWidget}
+                        className="fixed top-4 right-4 z-50 p-2 bg-gray-100 rounded-full text-gray-500 hover:bg-gray-200"
+                    >
+                        <X size={20} />
+                    </button>
+                )}
                 <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-4 mx-auto">
                     <ScanFace size={32} className="text-red-500" />
                 </div>
@@ -207,7 +239,7 @@ const App: React.FC = () => {
     return (
         <div className={`transition-all duration-300 text-gray-900 ${isEmbedded ? 'bg-transparent' : 'min-h-screen bg-gray-50 pb-12'}`}>
             {/* Header - Hidden in embed mode */}
-            {!isEmbedded && (
+            {!isEmbedded ? (
                 <header className="bg-white border-b border-gray-200 sticky top-0 z-40 shadow-sm animate-in fade-in slide-in-from-top-2">
                     <div className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
                         <div className="flex items-center gap-2">
@@ -228,6 +260,15 @@ const App: React.FC = () => {
                         </div>
                     </div>
                 </header>
+            ) : (
+                // Close button for Embed Mode
+                <button 
+                    onClick={closeWidget}
+                    className="fixed top-4 right-4 z-50 p-2.5 bg-black/40 hover:bg-black/60 backdrop-blur-md border border-white/10 rounded-full text-white/90 hover:text-white transition-all shadow-lg"
+                    title="Close Scanner"
+                >
+                    <X size={20} />
+                </button>
             )}
 
             <main className={`max-w-4xl mx-auto ${isEmbedded ? 'p-2 md:p-4' : 'p-4 md:p-6'} animate-in fade-in duration-500`}>
