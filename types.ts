@@ -15,6 +15,7 @@ export interface Metrics {
     yaw: number;   // Head turn (left/right) - normalized score -1 to 1
     pitch: number; // Head inclination (chin up/down) - ratio score
     faceY: number; // Vertical position of face center (0-1)
+    stability: number; // New: 0-100 score representing how stable the measurement is
 }
 
 export interface MeasurementHistoryItem {
